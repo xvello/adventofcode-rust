@@ -29,7 +29,7 @@ fn search_solution(memory: Vec<usize>) -> Result<(usize, usize), Error> {
             let mut altered = memory.clone();
             altered[1] = noun;
             altered[2] = verb;
-            if execute_intcode(altered) == Ok(19690720) {
+            if let Ok(19690720) = execute_intcode(altered) {
                 return Ok((noun, verb));
             }
         }

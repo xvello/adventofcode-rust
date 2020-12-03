@@ -8,12 +8,14 @@ use thiserror::Error;
 pub type Input = Box<dyn Iterator<Item = io::Result<String>>>;
 
 /// Errors caused by invalid client input
-#[derive(Error, Debug, PartialEq)]
+#[derive(Error, Debug)]
 pub enum Error {
     #[error("No match found")]
     NoMatch(),
     #[error("{0}")]
     FromString(String),
+    #[error(transparent)]
+    IOError(#[from] std::io::Error),
     #[error(transparent)]
     ParseIntError(#[from] ParseIntError),
     #[error(transparent)]
