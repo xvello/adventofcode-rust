@@ -12,6 +12,8 @@ pub type Input = Box<dyn Iterator<Item = io::Result<String>>>;
 pub enum Error {
     #[error("No match found")]
     NoMatch(),
+    #[error("Lookup out {0} of bounds, len {1}")]
+    OutOfBounds(usize, usize),
     #[error("{0}")]
     FromString(String),
     #[error(transparent)]
@@ -20,4 +22,11 @@ pub enum Error {
     ParseIntError(#[from] ParseIntError),
     #[error(transparent)]
     ParseCharError(#[from] ParseCharError),
+}
+
+#[macro_export]
+macro_rules! return_error {
+    ($($arg:tt)*) => {{
+        return Err(Error::FromString(format![$($arg)*]))
+    }}
 }
