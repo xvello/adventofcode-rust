@@ -1,3 +1,4 @@
+pub mod computer;
 pub mod d01;
 pub mod d02;
 pub mod d04;
