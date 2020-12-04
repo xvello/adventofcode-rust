@@ -5,7 +5,7 @@ clippy:
 	cargo clippy --workspace -- -D warnings
 
 test:
-	cargo test --workspace
+	RUST_LOG=info cargo test --workspace
 
 all: test fmt clippy
 
