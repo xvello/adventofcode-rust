@@ -6,6 +6,8 @@ use std::io;
 use std::io::BufRead;
 
 fn read_input(year: &str, day: &str) -> Input {
+    // Trim "_var" from day name to support several variations per day
+    let day = day.split('_').next().unwrap();
     let path = format!["input/{}/{}", year, day];
     debug!["Reading input from {}", path];
     let file = File::open(path).unwrap();
