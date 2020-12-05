@@ -1,7 +1,8 @@
-use crate::utils::{Error, Input};
+use crate::utils::Input;
+use anyhow::Result;
 use std::str::FromStr;
 
-pub fn run(mut input: Input) -> Result<(isize, isize), Error> {
+pub fn run(mut input: Input) -> Result<(isize, isize)> {
     let mut output: (isize, isize) = (0, 0);
 
     while let Some(Ok(line)) = input.next() {

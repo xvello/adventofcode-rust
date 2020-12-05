@@ -1,4 +1,5 @@
-use crate::utils::{Error, Input};
+use crate::utils::Input;
+use anyhow::{bail, Result};
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::str::FromStr;
@@ -7,7 +8,7 @@ lazy_static! {
     static ref INPUT_RE: regex::Regex = Regex::new(r"^(\d+)-(\d+) (\w): (\w+)$").unwrap();
 }
 
-pub fn run(mut input: Input) -> Result<(usize, usize), Error> {
+pub fn run(mut input: Input) -> Result<(usize, usize)> {
     let mut output = (0, 0);
 
     while let Some(Ok(line)) = input.next() {
@@ -31,11 +32,11 @@ struct Entry {
 }
 
 impl FromStr for Entry {
-    type Err = Error;
+    type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match INPUT_RE.captures(s) {
-            None => Err(Error::NoMatch()),
+            None => bail!("Invalid input: {}", s),
             Some(captures) => Ok(Entry {
                 pos1: usize::from_str(captures.get(1).unwrap().as_str())?,
                 pos2: usize::from_str(captures.get(2).unwrap().as_str())?,

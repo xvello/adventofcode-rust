@@ -1,7 +1,8 @@
-use crate::utils::{Error, Input};
+use crate::utils::Input;
+use anyhow::Result;
 use std::str::FromStr;
 
-pub fn run(mut input: Input) -> Result<(u32, u32), Error> {
+pub fn run(mut input: Input) -> Result<(u32, u32)> {
     let mut output = (0, 0);
 
     // Parse target range from input file. Make sure we only check

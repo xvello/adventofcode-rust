@@ -1,5 +1,5 @@
-use crate::return_error;
-use crate::utils::{Error, Input};
+use crate::utils::Input;
+use anyhow::{bail, Result};
 use lazy_static::lazy_static;
 use regex::{Match, Regex};
 use std::collections::BTreeSet;
@@ -10,7 +10,7 @@ lazy_static! {
     static ref SEAT_RE: regex::Regex = Regex::new(r"^([BF]{7})([RL]{3})$").unwrap();
 }
 
-pub fn run(mut input: Input) -> Result<(u16, u16), Error> {
+pub fn run(mut input: Input) -> Result<(u16, u16)> {
     let mut output = (0, 0);
     let mut known_ids = BTreeSet::new();
     while let Some(Ok(line)) = input.next() {
@@ -43,11 +43,11 @@ struct Seat {
 }
 
 impl FromStr for Seat {
-    type Err = Error;
+    type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match SEAT_RE.captures(s) {
-            None => return_error!("Invalid format: {}", s),
+            None => bail!("Invalid format: {}", s),
             Some(captures) => Ok(Self {
                 row: Seat::parse_binary(captures.get(1), 'B')?,
                 column: Seat::parse_binary(captures.get(2), 'R')?,
@@ -57,9 +57,9 @@ impl FromStr for Seat {
 }
 
 impl Seat {
-    fn parse_binary(input: Option<Match>, ones: char) -> Result<u8, Error> {
+    fn parse_binary(input: Option<Match>, ones: char) -> Result<u8> {
         match input {
-            None => return_error!("Empty input"),
+            None => bail!("Empty input"),
             Some(input) => {
                 let mut result = 0;
                 for bit in input.as_str().chars() {

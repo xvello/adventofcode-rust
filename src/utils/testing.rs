@@ -1,4 +1,4 @@
-use crate::utils::types::{Error, Input};
+use crate::utils::types::Input;
 use log::debug;
 use std::fmt::Debug;
 use std::fs::File;
@@ -14,7 +14,7 @@ fn read_input(year: &str, day: &str) -> Input {
     Box::new(io::BufReader::new(file).lines())
 }
 
-pub fn run_test<T>(year: &str, day: &str, function: fn(Input) -> Result<T, Error>, expected: T)
+pub fn run_test<T>(year: &str, day: &str, function: fn(Input) -> anyhow::Result<T>, expected: T)
 where
     T: Debug + PartialEq,
 {

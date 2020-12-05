@@ -1,9 +1,8 @@
-use crate::return_error;
-use crate::utils::{Error, Input};
+use crate::utils::Input;
 use crate::y2019::computer::AccessMode::{READ, WRITE};
+use anyhow::{bail, Result};
 use std::collections::VecDeque;
 use std::str::FromStr;
-
 enum AccessMode {
     READ,
     WRITE,
@@ -24,7 +23,7 @@ pub struct Computer {
 
 impl Computer {
     /// Reads the program and instantiates the work memory to a copy of the program
-    pub fn new(mut input: Input) -> Result<Self, Error> {
+    pub fn new(mut input: Input) -> Result<Self> {
         let mut program: Vec<isize> = Vec::new();
         match input.next() {
             Some(Ok(line)) => {
@@ -32,7 +31,7 @@ impl Computer {
                     program.push(isize::from_str(value)?);
                 }
             }
-            _ => return_error!("Empty input file"),
+            _ => bail!("Empty input file"),
         }
         Ok(Self {
             memory: program.clone(),
@@ -77,34 +76,34 @@ impl Computer {
     }
 
     /// Checks the current cursor is within bounds
-    fn check_cursor(&self) -> Result<(), Error> {
+    fn check_cursor(&self) -> Result<()> {
         if self.cursor >= self.memory.len() {
-            return_error!(
+            bail!(
                 "Cursor out of bounds: {}>={}",
                 self.cursor,
                 self.memory.len()
-            );
+            )
         }
         Ok(())
     }
 
     /// Checks whether an arbitrary value can be a valid cursor and convert it
-    fn convert_to_cursor(&self, p: isize) -> Result<usize, Error> {
+    fn convert_to_cursor(&self, p: isize) -> Result<usize> {
         if p < 0 {
-            return_error!("Unexpected negative pointer {} at {}", p, self.cursor);
+            bail!("Unexpected negative pointer {} at {}", p, self.cursor);
         }
         let p = p as usize;
         if p >= self.memory.len() {
-            return_error!("Pointer out of bounds: {}>={}", p, self.memory.len());
+            bail!("Pointer out of bounds: {}>={}", p, self.memory.len());
         }
         Ok(p)
     }
 
-    fn read_code(&mut self) -> Result<usize, Error> {
+    fn read_code(&mut self) -> Result<usize> {
         self.check_cursor()?;
         let value = self.memory[self.cursor];
         if value < 0 {
-            return_error!("Unexpected negative intcode: {}", value);
+            bail!("Unexpected negative intcode: {}", value)
         }
         let value = value as usize;
         self.cursor += 1;
@@ -112,7 +111,7 @@ impl Computer {
         Ok(value % 100)
     }
 
-    fn next_address(&mut self, mode: AccessMode) -> Result<usize, Error> {
+    fn next_address(&mut self, mode: AccessMode) -> Result<usize> {
         self.check_cursor()?;
         let addr = match self.modes % 10 {
             // Position mode: check the pointer is valid
@@ -123,9 +122,9 @@ impl Computer {
             // Immediate mode, only valid for reads
             1 => match mode {
                 READ => self.cursor,
-                WRITE => return_error!("Attempted write in immediate mode"),
+                WRITE => bail!("Attempted write in immediate mode"),
             },
-            other => return_error!(
+            other => bail!(
                 "Unexpected address mode {}, current cursor {}",
                 other,
                 self.cursor
@@ -137,18 +136,18 @@ impl Computer {
         Ok(addr as usize)
     }
 
-    fn read_value(&mut self) -> Result<isize, Error> {
+    fn read_value(&mut self) -> Result<isize> {
         let addr = self.next_address(READ)?;
         Ok(self.memory[addr])
     }
 
-    fn write_value(&mut self, value: isize) -> Result<(), Error> {
+    fn write_value(&mut self, value: isize) -> Result<()> {
         let addr = self.next_address(WRITE)?;
         self.memory[addr] = value;
         Ok(())
     }
 
-    fn write_bool(&mut self, value: bool) -> Result<(), Error> {
+    fn write_bool(&mut self, value: bool) -> Result<()> {
         if value {
             self.write_value(1)
         } else {
@@ -157,7 +156,7 @@ impl Computer {
     }
 
     /// Executes the program from the beginning until intcode 99
-    pub fn execute(&mut self) -> Result<(), Error> {
+    pub fn execute(&mut self) -> Result<()> {
         self.cursor = 0;
         loop {
             match self.read_code()? {
@@ -170,7 +169,7 @@ impl Computer {
                     self.write_value(v)?;
                 }
                 3 => match self.input.pop_front() {
-                    None => return_error!("No input to read"),
+                    None => bail!("No input to read"),
                     Some(i) => self.write_value(i)?,
                 },
                 4 => {
@@ -200,14 +199,14 @@ impl Computer {
                     self.write_bool(v)?;
                 }
                 99 => return Ok(()),
-                code => return_error!("Unexpected code {}", code),
+                code => bail!("Unexpected code {}", code),
             }
         }
     }
 }
 
 #[test]
-fn test_d05_example() -> Result<(), Error> {
+fn test_d05_example() -> Result<()> {
     let _ = pretty_env_logger::try_init();
     let program = vec![
         "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,",

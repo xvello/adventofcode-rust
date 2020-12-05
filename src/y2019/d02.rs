@@ -1,7 +1,8 @@
-use crate::utils::{Error, Input};
+use crate::utils::Input;
 use crate::y2019::computer::Computer;
+use anyhow::{bail, Result};
 
-pub fn run(input: Input) -> Result<(isize, isize), Error> {
+pub fn run(input: Input) -> Result<(isize, isize)> {
     let mut output = (0, 0);
     let mut computer = Computer::new(input)?;
 
@@ -18,7 +19,7 @@ pub fn run(input: Input) -> Result<(isize, isize), Error> {
     Ok(output)
 }
 
-fn search_solution(mut computer: Computer) -> Result<(isize, isize), Error> {
+fn search_solution(mut computer: Computer) -> Result<(isize, isize)> {
     for noun in 0..100 {
         for verb in 0..100 {
             computer.reset();
@@ -30,5 +31,5 @@ fn search_solution(mut computer: Computer) -> Result<(isize, isize), Error> {
             }
         }
     }
-    Err(Error::NoMatch())
+    bail!("No solution found")
 }

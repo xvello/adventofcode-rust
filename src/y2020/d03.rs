@@ -1,15 +1,16 @@
-use crate::utils::{Error, Input};
+use crate::utils::Input;
+use anyhow::{bail, Result};
 
 const TREE: char = '#';
 const OPEN: char = '.';
 
-pub fn run(mut input: Input) -> Result<(usize, usize), Error> {
+pub fn run(mut input: Input) -> Result<(usize, usize)> {
     let mut output = (0, 1);
 
     // Read the first line to get the pattern width
     let line = input.next().unwrap().unwrap();
     if line.chars().next().unwrap() != OPEN {
-        return Err(Error::FromString("Starting position is not open".into()));
+        bail!("Starting position is not open")
     }
     let pattern_width = line.len();
 
@@ -27,7 +28,7 @@ pub fn run(mut input: Input) -> Result<(usize, usize), Error> {
         // We could assume ASCII and handle [u8], but let's go the harder way
         let terrain: Vec<char> = line.chars().collect();
         if terrain.len() != pattern_width {
-            return Err(Error::FromString("Inconsistent width".into()));
+            bail!("Inconsistent width")
         }
         for counter in &mut counters {
             counter.ride(&terrain);

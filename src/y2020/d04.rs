@@ -1,6 +1,6 @@
-use crate::utils::{Error, Input};
+use crate::utils::Input;
+use anyhow::{bail, Result};
 use lazy_static::lazy_static;
-use log::warn;
 use regex::Regex;
 use std::num::ParseIntError;
 use std::str::FromStr;
@@ -16,7 +16,7 @@ lazy_static! {
     static ref HGT_RE: regex::Regex = Regex::new(r"^([0-9]+)cm|([0-9]+)in$").unwrap();
 }
 
-pub fn run(mut input: Input) -> Result<(u32, u32), Error> {
+pub fn run(mut input: Input) -> Result<(u32, u32)> {
     let mut validators: Holder = Default::default();
 
     while let Some(Ok(line)) = input.next() {
@@ -24,7 +24,7 @@ pub fn run(mut input: Input) -> Result<(u32, u32), Error> {
             // Records are separated by an empty line
             validators.check();
         } else {
-            validators.read(&line);
+            validators.read(&line)?;
         }
     }
     // Don't forget to check last record
@@ -42,9 +42,10 @@ struct Holder {
 }
 
 impl Holder {
-    fn read(&mut self, input: &str) {
-        self.validator1.read_first(input);
-        self.validator2.read_second(input);
+    fn read(&mut self, input: &str) -> Result<()> {
+        self.validator1.read_first(input)?;
+        self.validator2.read_second(input)?;
+        Ok(())
     }
 
     fn check(&mut self) {
@@ -77,7 +78,7 @@ struct Validator {
 
 impl Validator {
     /// Read a record and validate with rules from the first part (only check field presence)
-    fn read_first(&mut self, line: &str) {
+    fn read_first(&mut self, line: &str) -> Result<()> {
         // Find all key:value fields in the line
         for capture in FIELD_RE.captures_iter(line) {
             match capture.get(1).map(|m| m.as_str()) {
@@ -89,14 +90,15 @@ impl Validator {
                 Some("ecl") => self.ecl = true,
                 Some("pid") => self.pid = true,
                 Some("cid") => self.cid = true,
-                Some(field) => warn!["Unknown field {}", field],
-                None => warn!["Capture with no match?"],
+                Some(field) => bail!["Unknown field {}", field],
+                None => bail!["Capture with no match?"],
             }
         }
+        Ok(())
     }
 
     /// Read a record and validate with rules from the second part (check values are valid)
-    fn read_second(&mut self, line: &str) {
+    fn read_second(&mut self, line: &str) -> Result<()> {
         for capture in FIELD_RE.captures_iter(line) {
             let value = capture.get(2).map(|m| m.as_str()).unwrap_or_default();
 
@@ -144,10 +146,11 @@ impl Validator {
                     }
                 }
                 Some("cid") => {} // Ignored, always assumed present
-                Some(field) => warn!["Unknown field {}", field],
-                None => warn!["Capture with no match?"],
+                Some(field) => bail!["Unknown field {}", field],
+                None => bail!["Capture with no match?"],
             }
         }
+        Ok(())
     }
 
     fn is_valid(&self) -> bool {
