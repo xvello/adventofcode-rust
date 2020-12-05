@@ -18,8 +18,8 @@ where
 {
     let _ = pretty_env_logger::try_init();
     let output = function(read_input(year, day)).unwrap();
-    log::info!("Output for {}::{} is {:?}", year, day, output);
     assert_eq!(expected, output);
+    log::info!("Answers for {}::{} are {:?}", year, day, output);
 }
 
 #[macro_export]

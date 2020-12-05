@@ -7,9 +7,17 @@ Each year is in a separate crate with:
   - macro-generated tests for each day, defined in `mod.rs` 
 
 ```bash
-# Run all days
+# Run a single day with debug logs
+make y2020::d02
+# or directly
+RUST_LOG=debug cargo test y2020::d02
+
+# List all answers
+make answers
+# or directly
 RUST_LOG=info cargo test
-# Run a single day
-RUST_LOG=info cargo test y2020::d02
+
+# Lint and test the whole repo
+make all
 ```
 
