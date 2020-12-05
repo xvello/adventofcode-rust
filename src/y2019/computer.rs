@@ -46,7 +46,9 @@ impl Computer {
 
     /// Resets the work memory from the program
     pub fn reset(&mut self) {
-        self.memory = self.program.clone()
+        self.memory = self.program.clone();
+        self.input.clear();
+        self.output.clear();
     }
 
     /// Alters the work memory by storing an arbitrary value
@@ -74,6 +76,7 @@ impl Computer {
         self.output.clone()
     }
 
+    /// Checks the current cursor is within bounds
     fn check_cursor(&self) -> Result<(), Error> {
         if self.cursor >= self.memory.len() {
             return_error!(
@@ -83,6 +86,18 @@ impl Computer {
             );
         }
         Ok(())
+    }
+
+    /// Checks whether an arbitrary value can be a valid cursor and convert it
+    fn convert_to_cursor(&self, p: isize) -> Result<usize, Error> {
+        if p < 0 {
+            return_error!("Unexpected negative pointer {} at {}", p, self.cursor);
+        }
+        let p = p as usize;
+        if p >= self.memory.len() {
+            return_error!("Pointer out of bounds: {}>={}", p, self.memory.len());
+        }
+        Ok(p)
     }
 
     fn read_code(&mut self) -> Result<usize, Error> {
@@ -103,14 +118,7 @@ impl Computer {
             // Position mode: check the pointer is valid
             0 => {
                 let p = self.memory[self.cursor];
-                if p < 0 {
-                    return_error!("Unexpected negative pointer {} at {}", p, self.cursor);
-                }
-                let p = p as usize;
-                if p >= self.memory.len() {
-                    return_error!("Pointer out of bounds: {}>={}", p, self.memory.len());
-                }
-                p
+                self.convert_to_cursor(p)?
             }
             // Immediate mode, only valid for reads
             1 => match mode {
@@ -140,6 +148,14 @@ impl Computer {
         Ok(())
     }
 
+    fn write_bool(&mut self, value: bool) -> Result<(), Error> {
+        if value {
+            self.write_value(1)
+        } else {
+            self.write_value(0)
+        }
+    }
+
     /// Executes the program from the beginning until intcode 99
     pub fn execute(&mut self) -> Result<(), Error> {
         self.cursor = 0;
@@ -161,11 +177,53 @@ impl Computer {
                     let v = self.read_value()?;
                     self.output.push(v)
                 }
-                99 => {
-                    return Ok(());
+                5 => {
+                    let jump = self.read_value()? != 0;
+                    let p = self.read_value()?;
+                    if jump {
+                        self.cursor = self.convert_to_cursor(p)?;
+                    }
                 }
+                6 => {
+                    let jump = self.read_value()? == 0;
+                    let p = self.read_value()?;
+                    if jump {
+                        self.cursor = self.convert_to_cursor(p)?;
+                    }
+                }
+                7 => {
+                    let v = self.read_value()? < self.read_value()?;
+                    self.write_bool(v)?;
+                }
+                8 => {
+                    let v = self.read_value()? == self.read_value()?;
+                    self.write_bool(v)?;
+                }
+                99 => return Ok(()),
                 code => return_error!("Unexpected code {}", code),
             }
         }
     }
+}
+
+#[test]
+fn test_d05_example() -> Result<(), Error> {
+    let _ = pretty_env_logger::try_init();
+    let program = vec![
+        "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,",
+        "1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,",
+        "999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99",
+    ];
+    let input = vec![Ok(program.join(""))].into_iter();
+    let mut computer = Computer::new(Box::new(input))?;
+
+    let test_cases = vec![(7, 999), (8, 1000), (9, 1001)];
+    for (input, output) in test_cases {
+        computer.reset();
+        computer.push_input(input);
+        computer.execute()?;
+        assert_eq!(Some(output), computer.pop_output())
+    }
+
+    Ok(())
 }
