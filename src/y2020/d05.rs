@@ -80,7 +80,7 @@ impl Seat {
 }
 
 #[test]
-fn test_seat_parsing() {
+fn test_seat_parsing() -> Result<()> {
     let test_cases = vec![
         ("BFFFBBFRRR", 70, 7, 567),
         ("FFFBBBFRRR", 14, 7, 119),
@@ -89,9 +89,10 @@ fn test_seat_parsing() {
     ];
 
     for (input, row, column, id) in test_cases {
-        let seat = Seat::from_str(input).unwrap();
+        let seat = Seat::from_str(input)?;
         assert_eq!(row, seat.row);
         assert_eq!(column, seat.column);
         assert_eq!(id, seat.get_id());
     }
+    Ok(())
 }

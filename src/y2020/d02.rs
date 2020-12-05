@@ -1,4 +1,4 @@
-use crate::utils::Input;
+use crate::utils::{CaptureParser, Input};
 use anyhow::{bail, Result};
 use lazy_static::lazy_static;
 use regex::Regex;
@@ -38,10 +38,10 @@ impl FromStr for Entry {
         match INPUT_RE.captures(s) {
             None => bail!("Invalid input: {}", s),
             Some(captures) => Ok(Entry {
-                pos1: usize::from_str(captures.get(1).unwrap().as_str())?,
-                pos2: usize::from_str(captures.get(2).unwrap().as_str())?,
-                char: char::from_str(captures.get(3).unwrap().as_str())?,
-                pass: captures.get(4).unwrap().as_str().to_owned(),
+                pos1: captures.parse(1)?,
+                pos2: captures.parse(2)?,
+                char: captures.parse(3)?,
+                pass: captures.parse(4)?,
             }),
         }
     }

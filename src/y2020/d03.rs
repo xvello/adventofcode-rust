@@ -8,11 +8,14 @@ pub fn run(mut input: Input) -> Result<(usize, usize)> {
     let mut output = (0, 1);
 
     // Read the first line to get the pattern width
-    let line = input.next().unwrap().unwrap();
-    if line.chars().next().unwrap() != OPEN {
+    let first_line = match input.next() {
+        Some(Ok(line)) => line,
+        _ => bail!("Empty input"),
+    };
+    if !first_line.starts_with(OPEN) {
         bail!("Starting position is not open")
     }
-    let pattern_width = line.len();
+    let pattern_width = first_line.len();
 
     // We'll read the input once and feed it progressively to several states
     // First answer is the first tree counter, second is all counters multiplied

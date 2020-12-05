@@ -1,19 +1,27 @@
-use crate::utils::Input;
+use crate::utils::{CaptureParser, Input};
+use anyhow::bail;
 use anyhow::Result;
-use std::str::FromStr;
+use lazy_static::lazy_static;
+use regex::Regex;
+
+lazy_static! {
+    static ref INPUT_RE: regex::Regex = Regex::new(r"^(\d{6})-(\d{6})$").unwrap();
+}
 
 pub fn run(mut input: Input) -> Result<(u32, u32)> {
     let mut output = (0, 0);
 
-    // Parse target range from input file. Make sure we only check
-    // six-digit numbers by intersecting with the 100000-999999 range
-    let line = input.next().unwrap()?;
-    let mut tokens = line.split('-');
-    let min = u32::from_str(tokens.next().unwrap())?.max(100000);
-    let max = u32::from_str(tokens.next().unwrap())?.min(999999);
+    let input = match input.next() {
+        Some(Ok(line)) => line,
+        _ => bail!("Empty input"),
+    };
+    let range = match INPUT_RE.captures(&input) {
+        Some(captures) => captures.parse(1)?..=captures.parse(2)?,
+        _ => bail!("Invalid input: {}", input),
+    };
 
     // Brute-force all possible values in range, we could be smarter though
-    for number in min..=max {
+    for number in range {
         let valid = validate(number);
         if valid.0 {
             output.0 += 1;

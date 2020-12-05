@@ -10,10 +10,7 @@ pub fn run(mut input: Input) -> Result<(usize, usize)> {
         numbers.push(usize::from_str(&line)?);
     }
 
-    Ok((
-        compute_first(&numbers).unwrap(),
-        compute_second(&numbers).unwrap(),
-    ))
+    Ok((compute_first(&numbers)?, compute_second(&numbers)?))
 }
 
 fn compute_first(input: &[usize]) -> Result<usize> {

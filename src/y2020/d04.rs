@@ -1,9 +1,7 @@
-use crate::utils::Input;
+use crate::utils::{CaptureParser, Input};
 use anyhow::{bail, Result};
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::num::ParseIntError;
-use std::str::FromStr;
 
 lazy_static! {
     /// Regexp matching a three-letter field name and a non-empty value
@@ -14,6 +12,8 @@ lazy_static! {
     static ref PID_RE: regex::Regex = Regex::new(r"^[0-9]{9}$").unwrap();
     /// Regexp matching the height (000cm or 000in) for extraction
     static ref HGT_RE: regex::Regex = Regex::new(r"^([0-9]+)cm|([0-9]+)in$").unwrap();
+    /// Allowed values for eye color
+    static ref ECL_RE: regex::Regex = Regex::new("amb|blu|brn|gry|grn|hzl|oth").unwrap();
 }
 
 pub fn run(mut input: Input) -> Result<(u32, u32)> {
@@ -100,51 +100,37 @@ impl Validator {
     /// Read a record and validate with rules from the second part (check values are valid)
     fn read_second(&mut self, line: &str) -> Result<()> {
         for capture in FIELD_RE.captures_iter(line) {
-            let value = capture.get(2).map(|m| m.as_str()).unwrap_or_default();
-
             match capture.get(1).map(|m| m.as_str()) {
                 Some("byr") => {
-                    if let Ok(1920..=2002) = u32::from_str(value) {
+                    if let Ok(1920..=2002) = capture.parse(2) {
                         self.byr = true;
                     }
                 }
                 Some("iyr") => {
-                    if let Ok(2010..=2020) = u32::from_str(value) {
+                    if let Ok(2010..=2020) = capture.parse(2) {
                         self.iyr = true;
                     }
                 }
                 Some("eyr") => {
-                    if let Ok(2020..=2030) = u32::from_str(value) {
+                    if let Ok(2020..=2030) = capture.parse(2) {
                         self.eyr = true;
                     }
                 }
                 Some("hgt") => {
-                    if let Some(height) = HGT_RE.captures(value) {
+                    if let Some(height) = HGT_RE.captures(capture.try_get(2)?) {
                         // Either centimeters in first group...
-                        if let Some(Ok(150..=193)) = height.get(1).map(match_to_u32) {
+                        if let Ok(150..=193) = height.parse(1) {
                             self.hgt = true;
                         }
                         // ... or inches in the second group
-                        else if let Some(Ok(59..=76)) = height.get(2).map(match_to_u32) {
+                        else if let Ok(59..=76) = height.parse(2) {
                             self.hgt = true;
                         }
                     }
                 }
-                Some("hcl") => {
-                    if HCL_RE.is_match(value) {
-                        self.hcl = true;
-                    }
-                }
-                Some("ecl") => {
-                    if let "amb" | "blu" | "brn" | "gry" | "grn" | "hzl" | "oth" = value {
-                        self.ecl = true;
-                    }
-                }
-                Some("pid") => {
-                    if PID_RE.is_match(value) {
-                        self.pid = true;
-                    }
-                }
+                Some("hcl") => self.hcl = capture.matches(2, &HCL_RE),
+                Some("ecl") => self.ecl = capture.matches(2, &ECL_RE),
+                Some("pid") => self.pid = capture.matches(2, &PID_RE),
                 Some("cid") => {} // Ignored, always assumed present
                 Some(field) => bail!["Unknown field {}", field],
                 None => bail!["Capture with no match?"],
@@ -156,8 +142,4 @@ impl Validator {
     fn is_valid(&self) -> bool {
         self.byr && self.iyr && self.eyr && self.hgt && self.hcl && self.ecl && self.pid
     }
-}
-
-fn match_to_u32(m: regex::Match) -> Result<u32, ParseIntError> {
-    u32::from_str(m.as_str())
 }

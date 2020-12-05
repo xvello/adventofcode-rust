@@ -66,8 +66,11 @@ impl Computer {
     }
 
     /// Get the latest output
-    pub fn pop_output(&mut self) -> Option<isize> {
-        self.output.pop()
+    pub fn pop_output(&mut self) -> Result<isize> {
+        match self.output.pop() {
+            Some(value) => Ok(value),
+            None => bail!("No return value"),
+        }
     }
 
     /// Get a copy of all outputs in order
@@ -221,7 +224,7 @@ fn test_d05_example() -> Result<()> {
         computer.reset();
         computer.push_input(input);
         computer.execute()?;
-        assert_eq!(Some(output), computer.pop_output())
+        assert_eq!(output, computer.pop_output()?)
     }
 
     Ok(())
