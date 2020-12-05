@@ -1,16 +1,26 @@
 use crate::utils::Input;
 use anyhow::{bail, Result};
-use std::borrow::Borrow;
 
-/// Optimized version in constant space, using a parity check and the following reasoning:
-///   - due to the ticket format, we know the ID is a u10, so the search space is 0..1024
-///   - XORing all possible values would return 0
-///   - by tracking the lowest and highest known IDs, we can backfill the gaps at the
-///     beginning and the end, meaning the only missing value is our seat
-///   - if it were XORed in the checksum, the result would be 0 -> checksum == out seat
-pub fn run(input: Input) -> Result<(u16, u16)> {
-    let seats = input.map(|l| parse_seat_id(l.unwrap().borrow()).unwrap());
-    Ok(find_my_seat(seats))
+pub fn run(mut input: Input) -> Result<(u16, u16)> {
+    let mut min = u16::max_value();
+    let mut max = u16::min_value();
+    let mut checksum = 0;
+
+    // Iterate on all known tickets and XOR them in the checksum
+    while let Some(Ok(line)) = input.next() {
+        let id = parse_seat_id(&line)?;
+        min = min.min(id);
+        max = max.max(id);
+        checksum ^= id;
+    }
+
+    // XOR all valid tickets (including ours), negating all tickets we're parsed
+    for id in min..=max {
+        checksum ^= id;
+    }
+
+    // The checksum value now only has one ticket ID XORed in it: ours
+    Ok((max, checksum))
 }
 
 fn parse_seat_id(input: &str) -> Result<u16> {
@@ -27,30 +37,6 @@ fn parse_seat_id(input: &str) -> Result<u16> {
         }
     }
     Ok(result)
-}
-
-fn find_my_seat(input: impl Iterator<Item = u16>) -> (u16, u16) {
-    let mut min = u16::max_value();
-    let mut max = u16::min_value();
-    let mut checksum = 0;
-
-    // Iterate on all known tickets and XOR them in the checksum
-    for id in input {
-        min = min.min(id);
-        max = max.max(id);
-        checksum ^= id;
-    }
-
-    // Feed the tickets we didn't see yet
-    for id in 0..min {
-        checksum ^= id;
-    }
-    for id in max + 1..1024 {
-        checksum ^= id;
-    }
-
-    // The checksum value is our seat
-    (max, checksum)
 }
 
 #[test]
