@@ -7,6 +7,7 @@ pub mod d05_opt;
 pub mod d06;
 pub mod d06_opt;
 pub mod d07;
+pub mod d08;
 
 crate::generate_tests! {
     y2020,
@@ -17,4 +18,5 @@ crate::generate_tests! {
     d05: (871, 640), d05_opt: (871, 640),
     d06: (6686, 3476), d06_opt: (6686, 3476),
     d07: (177, 34988),
+    d08: (1930, 34988),
 }
