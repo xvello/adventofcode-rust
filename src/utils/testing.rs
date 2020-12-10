@@ -6,7 +6,7 @@ use std::fs::File;
 use std::io;
 use std::io::BufRead;
 
-fn read_input(year: &str, day: &str) -> Result<Input> {
+pub fn read_input(year: &str, day: &str) -> Result<Input> {
     // Trim "_var" from day name to support several variations per day
     let day = match day.find('_') {
         None => day,
@@ -31,7 +31,7 @@ where
 
 #[macro_export]
 macro_rules! generate_tests {
-    ($year:ident, $($day:ident: $expected:expr,)*) => {
+    ($year:ident, $($day:ident: $expected:expr,)+) => {
     $(
         #[test]
         fn $day() -> anyhow::Result<()> {
@@ -43,5 +43,18 @@ macro_rules! generate_tests {
             )
         }
     )*
+        #[cfg(all(feature = "nightly", test))]
+        mod bench {
+            extern crate test;
+        $(
+            #[bench]
+            fn $day(b: &mut test::Bencher) {
+                b.iter(|| {
+                    let input = crate::utils::read_input(stringify!($year), stringify!($day)).unwrap();
+                    crate::$year::$day::run(Box::new(input)).unwrap()
+                });
+            }
+        )*
+        }
     }
 }

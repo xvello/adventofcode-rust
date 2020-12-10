@@ -13,7 +13,10 @@ clippy:
 test:
 	RUST_LOG=info cargo test --lib
 
+bench:
+	rustup run nightly cargo bench --features nightly
+
 all: test fmt clippy
 
-.PHONY: fmt clippy test all answers
+.PHONY: fmt clippy test all answers bench
 .DEFAULT_GOAL := all
