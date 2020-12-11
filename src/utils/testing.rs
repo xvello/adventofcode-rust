@@ -18,6 +18,10 @@ pub fn read_input(year: &str, day: &str) -> Result<Input> {
     Ok(Box::new(io::BufReader::new(file).lines()))
 }
 
+pub fn wrap_input(input: &'static str) -> Input {
+    Box::new(io::BufReader::new(input.as_bytes()).lines())
+}
+
 pub fn run_test<T>(year: &str, day: &str, f: fn(Input) -> Result<T>, expected: T) -> Result<()>
 where
     T: Debug + PartialEq,
