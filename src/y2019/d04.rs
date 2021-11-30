@@ -46,7 +46,7 @@ fn validate(number: u32) -> (bool, bool) {
     let mut repeats = 0;
 
     for place in 0..6 {
-        let current = (number / (10 as u32).pow(place)) % 10;
+        let current = (number / (10_u32).pow(place)) % 10;
         if let Some(previous) = previous {
             if current == previous {
                 found_repeat = true;

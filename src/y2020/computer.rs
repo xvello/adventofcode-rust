@@ -69,12 +69,12 @@ impl Computer {
             self.executed[self.cursor] = true;
             //log::debug!("Executing {:?} at cursor {}", self.instructions[self.cursor], self.cursor);
             match self.instructions[self.cursor] {
-                Instruction::ACC(delta) => {
+                Instruction::Acc(delta) => {
                     self.accumulator += delta;
                     self.move_cursor(1)?;
                 }
-                Instruction::JMP(offset) => self.move_cursor(offset)?,
-                Instruction::NOOP(_) => self.move_cursor(1)?,
+                Instruction::Jump(offset) => self.move_cursor(offset)?,
+                Instruction::NoOp(_) => self.move_cursor(1)?,
             }
             if self.cursor == self.instructions.len() {
                 // Stop execution when the last instruction has been executed
@@ -116,9 +116,9 @@ impl Computer {
 
 #[derive(Eq, PartialEq, Debug, Clone)]
 pub enum Instruction {
-    ACC(isize),
-    JMP(isize),
-    NOOP(isize),
+    Acc(isize),
+    Jump(isize),
+    NoOp(isize),
 }
 
 impl FromStr for Instruction {
@@ -130,11 +130,11 @@ impl FromStr for Instruction {
         let value = isize::from_str(tokens.next().unwrap_or_default())?;
         match name {
             None => Err(CError::InvalidInput("empty line".to_string())),
-            Some("nop") => Ok(Instruction::NOOP(value)),
-            Some("acc") => Ok(Instruction::ACC(value)),
+            Some("nop") => Ok(Instruction::NoOp(value)),
+            Some("acc") => Ok(Instruction::Acc(value)),
             Some("jmp") => match value {
                 0 => Err(CError::InvalidInput("Cannot jump by zero".to_string())),
-                offset => Ok(Instruction::JMP(offset)),
+                offset => Ok(Instruction::Jump(offset)),
             },
             Some(_) => Err(CError::InvalidInput(s.to_string())),
         }
@@ -143,10 +143,10 @@ impl FromStr for Instruction {
 
 #[test]
 fn test_parse_instruction() -> Result<(), CError> {
-    assert_eq!(Instruction::NOOP(0), Instruction::from_str("nop +0")?);
-    assert_eq!(Instruction::JMP(5), Instruction::from_str("jmp +5")?);
-    assert_eq!(Instruction::JMP(-5), Instruction::from_str("jmp -5")?);
-    assert_eq!(Instruction::ACC(10), Instruction::from_str("acc +10")?);
-    assert_eq!(Instruction::ACC(-5), Instruction::from_str("acc -5")?);
+    assert_eq!(Instruction::NoOp(0), Instruction::from_str("nop +0")?);
+    assert_eq!(Instruction::Jump(5), Instruction::from_str("jmp +5")?);
+    assert_eq!(Instruction::Jump(-5), Instruction::from_str("jmp -5")?);
+    assert_eq!(Instruction::Acc(10), Instruction::from_str("acc +10")?);
+    assert_eq!(Instruction::Acc(-5), Instruction::from_str("acc -5")?);
     Ok(())
 }

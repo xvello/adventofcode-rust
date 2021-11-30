@@ -20,9 +20,9 @@ pub fn run(input: Input) -> Result<(isize, isize)> {
     for (pos, instruction) in computer.get_instructions().enumerate() {
         let mut cloned = computer.clone();
         match instruction {
-            Instruction::ACC(_) | Instruction::NOOP(0) => {}
-            Instruction::JMP(offset) => cloned.patch_instruction(pos, Instruction::NOOP(*offset)),
-            Instruction::NOOP(offset) => cloned.patch_instruction(pos, Instruction::JMP(*offset)),
+            Instruction::Acc(_) | Instruction::NoOp(0) => {}
+            Instruction::Jump(offset) => cloned.patch_instruction(pos, Instruction::NoOp(*offset)),
+            Instruction::NoOp(offset) => cloned.patch_instruction(pos, Instruction::Jump(*offset)),
         }
         if let Ok(()) = cloned.run() {
             log::debug!("Success by patching position {}", pos);

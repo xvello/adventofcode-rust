@@ -1,11 +1,11 @@
 use crate::utils::Input;
-use crate::y2019::computer::AccessMode::{READ, WRITE};
+use crate::y2019::computer::AccessMode::{Read, Write};
 use anyhow::{bail, Result};
 use std::collections::VecDeque;
 use std::str::FromStr;
 enum AccessMode {
-    READ,
-    WRITE,
+    Read,
+    Write,
 }
 
 /// A computer is instantiated with a read-only program.
@@ -124,8 +124,8 @@ impl Computer {
             }
             // Immediate mode, only valid for reads
             1 => match mode {
-                READ => self.cursor,
-                WRITE => bail!("Attempted write in immediate mode"),
+                Read => self.cursor,
+                Write => bail!("Attempted write in immediate mode"),
             },
             other => bail!(
                 "Unexpected address mode {}, current cursor {}",
@@ -140,12 +140,12 @@ impl Computer {
     }
 
     fn read_value(&mut self) -> Result<isize> {
-        let addr = self.next_address(READ)?;
+        let addr = self.next_address(Read)?;
         Ok(self.memory[addr])
     }
 
     fn write_value(&mut self, value: isize) -> Result<()> {
-        let addr = self.next_address(WRITE)?;
+        let addr = self.next_address(Write)?;
         self.memory[addr] = value;
         Ok(())
     }

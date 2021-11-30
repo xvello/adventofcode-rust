@@ -1,7 +1,8 @@
-use crate::utils::{CaptureParser, Input};
 use anyhow::{bail, Result};
 use lazy_static::lazy_static;
 use regex::Regex;
+
+use crate::utils::{CaptureParser, Input};
 
 lazy_static! {
     /// Regexp matching a three-letter field name and a non-empty value
@@ -118,12 +119,10 @@ impl Validator {
                 }
                 Some("hgt") => {
                     if let Some(height) = HGT_RE.captures(capture.try_get(2)?) {
-                        // Either centimeters in first group...
-                        if let Ok(150..=193) = height.parse(1) {
-                            self.hgt = true;
-                        }
-                        // ... or inches in the second group
-                        else if let Ok(59..=76) = height.parse(2) {
+                        // Either centimeters in first group or inches in the second group
+                        if matches!(height.parse(1), Ok(150..=193))
+                            || matches!(height.parse(2), Ok(59..=76))
+                        {
                             self.hgt = true;
                         }
                     }

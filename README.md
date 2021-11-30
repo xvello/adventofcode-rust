@@ -1,6 +1,6 @@
 # adventofcode.com in Rust
 
-My solutions for the [2020](https://adventofcode.com/2020) and [2019](https://adventofcode.com/2019) editions of the Advent of Code Calendar, in [Rust](https://www.rust-lang.org/).
+My (partial) solutions for the [2021](https://adventofcode.com/2021) , [2020](https://adventofcode.com/2020) and [2019](https://adventofcode.com/2019) editions of the Advent of Code Calendar, in [Rust](https://www.rust-lang.org/).
 
 Each year is in a separate crate with:
   - one module per day, providing a `run` function

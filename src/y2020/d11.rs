@@ -36,22 +36,22 @@ fn solve(initial_map: &SeatMap, run: fn(&SeatMap) -> (SeatMap, bool)) -> usize {
     log::debug!("Map stabilizing after {} rounds", iterations);
     let stats = map.stats();
     log::debug!("Final stats: {:?}", stats);
-    stats[&SeatState::OCCUPIED]
+    stats[&SeatState::Occupied]
 }
 
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
 enum SeatState {
-    FLOOR,
-    EMPTY,
-    OCCUPIED,
+    Floor,
+    Empty,
+    Occupied,
 }
 
 impl From<char> for SeatState {
     fn from(c: char) -> Self {
         match c {
-            'L' => Self::EMPTY,
-            '#' => Self::OCCUPIED,
-            _ => Self::FLOOR,
+            'L' => Self::Empty,
+            '#' => Self::Occupied,
+            _ => Self::Floor,
         }
     }
 }
@@ -59,9 +59,9 @@ impl From<char> for SeatState {
 impl From<&SeatState> for char {
     fn from(s: &SeatState) -> Self {
         match s {
-            SeatState::EMPTY => 'L',
-            SeatState::OCCUPIED => '#',
-            SeatState::FLOOR => '.',
+            SeatState::Empty => 'L',
+            SeatState::Occupied => '#',
+            SeatState::Floor => '.',
         }
     }
 }
@@ -111,7 +111,7 @@ impl SeatMap {
         Some(&self.0[row as usize][column as usize])
     }
 
-    /// Counts the number of OCCUPIED seats by looking on all 8 directions around a given seat
+    /// Counts the number of Occupied seats by looking on all 8 directions around a given seat
     fn count_occupied(&self, row: usize, column: usize, contiguous: bool) -> u8 {
         // Iterate on all eight directions to count seats
         let mut occupied = 0;
@@ -124,14 +124,14 @@ impl SeatMap {
                 x += x_offset;
                 y += y_offset;
                 match self.get_seat_state(x, y) {
-                    Some(SeatState::FLOOR) => {
+                    Some(SeatState::Floor) => {
                         if contiguous {
                             break; // We only look at the immediate neighbour
                         }
                         continue; // Project further
                     }
-                    Some(SeatState::EMPTY) | None => break,
-                    Some(SeatState::OCCUPIED) => {
+                    Some(SeatState::Empty) | None => break,
+                    Some(SeatState::Occupied) => {
                         occupied += 1;
                         break;
                     }
@@ -150,19 +150,19 @@ impl SeatMap {
             for y in 0..row.capacity() {
                 let neighbours = self.count_occupied(x, y, true);
                 let value = match self.0[x][y] {
-                    SeatState::FLOOR => SeatState::FLOOR,
-                    SeatState::OCCUPIED => {
+                    SeatState::Floor => SeatState::Floor,
+                    SeatState::Occupied => {
                         if neighbours < 4 {
-                            SeatState::OCCUPIED
+                            SeatState::Occupied
                         } else {
-                            SeatState::EMPTY
+                            SeatState::Empty
                         }
                     }
-                    SeatState::EMPTY => {
+                    SeatState::Empty => {
                         if neighbours == 0 {
-                            SeatState::OCCUPIED
+                            SeatState::Occupied
                         } else {
-                            SeatState::EMPTY
+                            SeatState::Empty
                         }
                     }
                 };
@@ -185,19 +185,19 @@ impl SeatMap {
             for y in 0..row.capacity() {
                 let neighbours = self.count_occupied(x, y, false);
                 let value = match self.0[x][y] {
-                    SeatState::FLOOR => SeatState::FLOOR,
-                    SeatState::OCCUPIED => {
+                    SeatState::Floor => SeatState::Floor,
+                    SeatState::Occupied => {
                         if neighbours < 5 {
-                            SeatState::OCCUPIED
+                            SeatState::Occupied
                         } else {
-                            SeatState::EMPTY
+                            SeatState::Empty
                         }
                     }
-                    SeatState::EMPTY => {
+                    SeatState::Empty => {
                         if neighbours == 0 {
-                            SeatState::OCCUPIED
+                            SeatState::Occupied
                         } else {
-                            SeatState::EMPTY
+                            SeatState::Empty
                         }
                     }
                 };

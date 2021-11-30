@@ -24,25 +24,25 @@ impl Ship1 {
         Self {
             north: 0,
             east: 0,
-            direction: Direction::EAST,
+            direction: Direction::East,
         }
     }
 
     fn execute(&mut self, instruction: &Instruction) {
         match instruction {
-            Instruction::MOVE(Direction::NORTH, amount) => self.north += amount,
-            Instruction::MOVE(Direction::SOUTH, amount) => self.north -= amount,
-            Instruction::MOVE(Direction::EAST, amount) => self.east += amount,
-            Instruction::MOVE(Direction::WEST, amount) => self.east -= amount,
-            Instruction::FORWARD(amount) => {
-                self.execute(&Instruction::MOVE(self.direction.clone(), *amount))
+            Instruction::Move(Direction::North, amount) => self.north += amount,
+            Instruction::Move(Direction::South, amount) => self.north -= amount,
+            Instruction::Move(Direction::East, amount) => self.east += amount,
+            Instruction::Move(Direction::West, amount) => self.east -= amount,
+            Instruction::Forward(amount) => {
+                self.execute(&Instruction::Move(self.direction.clone(), *amount))
             }
-            Instruction::LEFT(angle) => {
+            Instruction::Left(angle) => {
                 for _ in 0..angle / 90 {
                     self.direction = self.direction.left();
                 }
             }
-            Instruction::RIGHT(angle) => {
+            Instruction::Right(angle) => {
                 for _ in 0..angle / 90 {
                     self.direction = self.direction.right();
                 }
@@ -73,22 +73,22 @@ impl Ship2 {
     }
     fn execute(&mut self, instruction: &Instruction) {
         match instruction {
-            Instruction::MOVE(Direction::NORTH, amount) => self.waypoint_north += amount,
-            Instruction::MOVE(Direction::SOUTH, amount) => self.waypoint_north -= amount,
-            Instruction::MOVE(Direction::EAST, amount) => self.waypoint_east += amount,
-            Instruction::MOVE(Direction::WEST, amount) => self.waypoint_east -= amount,
-            Instruction::FORWARD(amount) => {
+            Instruction::Move(Direction::North, amount) => self.waypoint_north += amount,
+            Instruction::Move(Direction::South, amount) => self.waypoint_north -= amount,
+            Instruction::Move(Direction::East, amount) => self.waypoint_east += amount,
+            Instruction::Move(Direction::West, amount) => self.waypoint_east -= amount,
+            Instruction::Forward(amount) => {
                 self.ship_north += self.waypoint_north * amount;
                 self.ship_east += self.waypoint_east * amount;
             }
-            Instruction::LEFT(angle) => {
+            Instruction::Left(angle) => {
                 for _ in 0..angle / 90 {
                     let new_east = -self.waypoint_north;
                     self.waypoint_north = self.waypoint_east;
                     self.waypoint_east = new_east;
                 }
             }
-            Instruction::RIGHT(angle) => {
+            Instruction::Right(angle) => {
                 for _ in 0..angle / 90 {
                     let new_east = self.waypoint_north;
                     self.waypoint_north = -self.waypoint_east;
@@ -104,10 +104,10 @@ impl Ship2 {
 }
 
 enum Instruction {
-    MOVE(Direction, isize),
-    FORWARD(isize),
-    LEFT(isize),
-    RIGHT(isize),
+    Move(Direction, isize),
+    Forward(isize),
+    Left(isize),
+    Right(isize),
 }
 
 impl FromStr for Instruction {
@@ -117,13 +117,13 @@ impl FromStr for Instruction {
         let (code, amount) = s.split_at(1);
         let amount = isize::from_str(amount)?;
         match code {
-            "N" => Ok(Instruction::MOVE(Direction::NORTH, amount)),
-            "E" => Ok(Instruction::MOVE(Direction::EAST, amount)),
-            "S" => Ok(Instruction::MOVE(Direction::SOUTH, amount)),
-            "W" => Ok(Instruction::MOVE(Direction::WEST, amount)),
-            "F" => Ok(Instruction::FORWARD(amount)),
-            "L" => Ok(Instruction::LEFT(amount)),
-            "R" => Ok(Instruction::RIGHT(amount)),
+            "N" => Ok(Instruction::Move(Direction::North, amount)),
+            "E" => Ok(Instruction::Move(Direction::East, amount)),
+            "S" => Ok(Instruction::Move(Direction::South, amount)),
+            "W" => Ok(Instruction::Move(Direction::West, amount)),
+            "F" => Ok(Instruction::Forward(amount)),
+            "L" => Ok(Instruction::Left(amount)),
+            "R" => Ok(Instruction::Right(amount)),
             _ => bail!("Unknown instruction {}", s),
         }
     }
@@ -131,28 +131,28 @@ impl FromStr for Instruction {
 
 #[derive(Debug, Clone)]
 enum Direction {
-    NORTH,
-    EAST,
-    SOUTH,
-    WEST,
+    North,
+    East,
+    South,
+    West,
 }
 
 impl Direction {
     fn right(&self) -> Self {
         match self {
-            Direction::NORTH => Direction::EAST,
-            Direction::EAST => Direction::SOUTH,
-            Direction::SOUTH => Direction::WEST,
-            Direction::WEST => Direction::NORTH,
+            Direction::North => Direction::East,
+            Direction::East => Direction::South,
+            Direction::South => Direction::West,
+            Direction::West => Direction::North,
         }
     }
 
     fn left(&self) -> Self {
         match &self {
-            Direction::NORTH => Direction::WEST,
-            Direction::WEST => Direction::SOUTH,
-            Direction::SOUTH => Direction::EAST,
-            Direction::EAST => Direction::NORTH,
+            Direction::North => Direction::West,
+            Direction::West => Direction::South,
+            Direction::South => Direction::East,
+            Direction::East => Direction::North,
         }
     }
 }
