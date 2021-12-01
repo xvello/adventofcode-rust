@@ -14,7 +14,7 @@ test:
 	RUST_LOG=info cargo test --lib
 
 bench:
-	rustup run nightly cargo bench --features nightly
+	cargo +nightly bench --features nightly $(named)
 
 all: test fmt clippy
 

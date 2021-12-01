@@ -1,7 +1,7 @@
 mod captures;
-mod testing;
-mod types;
+mod testing_new;
+mod testing_old;
 
 pub use captures::*;
-pub use testing::*;
-pub use types::*;
+pub use testing_new::*;
+pub use testing_old::*;

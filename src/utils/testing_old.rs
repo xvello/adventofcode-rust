@@ -1,10 +1,13 @@
-use crate::utils::types::Input;
-use anyhow::Result;
+use anyhow::{bail, Result};
 use log::debug;
 use std::fmt::Debug;
 use std::fs::File;
 use std::io;
 use std::io::BufRead;
+use std::str::FromStr;
+
+/// Methods are passed input as a line iterator on the input file
+pub type Input = Box<dyn Iterator<Item = io::Result<String>>>;
 
 pub fn read_input(year: &str, day: &str) -> Result<Input> {
     // Trim "_var" from day name to support several variations per day
@@ -31,6 +34,20 @@ where
     assert_eq!(expected, output);
     log::info!("Answers for {}::{} are {:?}", year, day, output);
     Ok(())
+}
+
+pub fn parse_input_lines<T: FromStr>(mut input: Input) -> Result<Vec<T>>
+where
+    <T as std::str::FromStr>::Err: std::error::Error,
+{
+    let mut values = vec![];
+    while let Some(Ok(line)) = input.next() {
+        match T::from_str(&line) {
+            Ok(value) => values.push(value),
+            Err(e) => bail!("cannot parse `{}`: {}", line, e),
+        }
+    }
+    Ok(values)
 }
 
 #[macro_export]
