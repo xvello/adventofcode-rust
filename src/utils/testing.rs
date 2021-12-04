@@ -56,18 +56,5 @@ macro_rules! generate_tests {
             Ok(())
         }
     )*
-        #[cfg(all(feature = "nightly", test))]
-        mod bench {
-            extern crate test;
-        $(
-            #[bench]
-            fn $day(b: &mut test::Bencher) {
-                let _ = pretty_env_logger::try_init();
-                let input = crate::utils::Input::open(stringify!($year), stringify!($day)).unwrap();
-
-                b.iter(|| crate::$year::$day::run(&input));
-            }
-        )*
-        }
     }
 }

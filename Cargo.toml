@@ -4,9 +4,6 @@ version = "0.1.0"
 authors = ["Xavier Vello <xavier.vello@gmail.com>"]
 edition = "2021"
 
-[features]
-nightly = []
-
 [dependencies]
 log = "0.4"
 pretty_env_logger = "0.4"
@@ -17,3 +14,16 @@ regex = "1"
 bit-vec = "0.6"
 petgraph = "0.6"
 retain_mut = "0.1.5"
+
+[dev-dependencies]
+criterion = "0.3"
+
+[lib]
+bench = false
+
+[[bench]]
+name = "bench"
+harness = false
+
+[profile.bench]
+debug = 1

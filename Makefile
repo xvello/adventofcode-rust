@@ -14,9 +14,14 @@ test:
 	RUST_LOG=info cargo test --lib
 
 bench:
-	cargo +nightly bench --features nightly $(named)
+	cargo bench
+
+perf:
+	cargo bench --no-run
+	perf record --call-graph dwarf -- cargo bench -- --profile-time 1
+	hotspot || perf report
 
 all: test fmt clippy
 
-.PHONY: fmt clippy test all answers bench
+.PHONY: fmt clippy test all answers bench perf
 .DEFAULT_GOAL := all
