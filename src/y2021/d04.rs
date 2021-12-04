@@ -1,4 +1,4 @@
-use crate::utils::NewInput;
+use crate::utils::Input;
 use anyhow::{bail, Result};
 use retain_mut::RetainMut;
 use std::ops::Add;
@@ -8,7 +8,7 @@ const ROW_SIZE: usize = 5;
 const ROW_COUNT: usize = 5;
 const MARK: u8 = u8::MAX;
 
-pub fn run(input: &NewInput) -> Result<(u16, u16)> {
+pub fn run(input: &Input) -> Result<(u16, u16)> {
     let mut output = (0, 0);
     let mut lines = input.lines();
     let numbers: Vec<u8> = match lines.next() {

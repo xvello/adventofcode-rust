@@ -1,10 +1,10 @@
-use crate::utils::NewInput;
+use crate::utils::Input;
 use anyhow::{bail, Ok, Result};
 use std::ops::{AddAssign, SubAssign};
 
 const REPORT_SIZE: usize = 12;
 
-pub fn run(input: &NewInput) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     let values: Vec<u16> = input
         .lines()
         .map(|l| u16::from_str_radix(l, 2).unwrap())

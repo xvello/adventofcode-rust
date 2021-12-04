@@ -1,8 +1,8 @@
-use crate::utils::NewInput;
+use crate::utils::Input;
 use anyhow::Result;
 
-pub fn run(input: &NewInput) -> Result<(usize, usize)> {
-    let measurements: Vec<usize> = input.parse_into()?;
+pub fn run(input: &Input) -> Result<(usize, usize)> {
+    let measurements: Vec<usize> = input.lines_into()?;
     Ok((compute_first(&measurements), compute_second(&measurements)))
 }
 

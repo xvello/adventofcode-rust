@@ -2,11 +2,11 @@ use crate::utils::Input;
 use anyhow::{bail, Result};
 use std::str::FromStr;
 
-pub fn run(mut input: Input) -> Result<(isize, isize)> {
+pub fn run(input: &Input) -> Result<(isize, isize)> {
     let mut ship1 = Ship1::new();
     let mut ship2 = Ship2::new();
-    while let Some(Ok(line)) = input.next() {
-        let instruction = Instruction::from_str(&line)?;
+    for line in input.lines() {
+        let instruction = Instruction::from_str(line)?;
         ship1.execute(&instruction);
         ship2.execute(&instruction);
     }

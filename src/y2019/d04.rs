@@ -8,16 +8,12 @@ lazy_static! {
     static ref INPUT_RE: regex::Regex = Regex::new(r"^(\d{6})-(\d{6})$").unwrap();
 }
 
-pub fn run(mut input: Input) -> Result<(u32, u32)> {
+pub fn run(input: &Input) -> Result<(u32, u32)> {
     let mut output = (0, 0);
 
-    let input = match input.next() {
-        Some(Ok(line)) => line,
-        _ => bail!("Empty input"),
-    };
-    let range = match INPUT_RE.captures(&input) {
+    let range = match INPUT_RE.captures(input.all()) {
         Some(captures) => captures.parse(1)?..=captures.parse(2)?,
-        _ => bail!("Invalid input: {}", input),
+        _ => bail!("Invalid input: {}", input.all()),
     };
 
     // Brute-force all possible values in range, we could be smarter though

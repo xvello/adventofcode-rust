@@ -2,7 +2,7 @@ use crate::utils::Input;
 use anyhow::{bail, Result};
 use bit_vec::BitVec;
 
-pub fn run(mut input: Input) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     let mut output = (0, 0);
 
     // First part: anyone says yes
@@ -10,7 +10,7 @@ pub fn run(mut input: Input) -> Result<(usize, usize)> {
     // Second part: everyone says yes
     let mut everyone_yes = BitVec::from_elem(26, true);
 
-    while let Some(Ok(line)) = input.next() {
+    for line in input.lines() {
         if line.is_empty() {
             // New group, increase counters and clear
             output.0 += anyone_yes.count_true();
@@ -31,7 +31,7 @@ pub fn run(mut input: Input) -> Result<(usize, usize)> {
     Ok(output)
 }
 
-fn parse_answers(line: String) -> Result<BitVec> {
+fn parse_answers(line: &str) -> Result<BitVec> {
     let mut answers = BitVec::from_elem(26, false);
     for char in line.bytes() {
         if !char.is_ascii_lowercase() {

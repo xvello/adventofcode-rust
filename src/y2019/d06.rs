@@ -2,11 +2,11 @@ use crate::utils::Input;
 use anyhow::{bail, Result};
 use std::collections::HashMap;
 
-pub fn run(mut input: Input) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     let mut output = (0, 0);
     let mut orbits = HashMap::new();
-    while let Some(Ok(line)) = input.next() {
-        let (center, object) = parse_names(line);
+    for line in input.lines() {
+        let (center, object) = parse_names(line.to_owned());
         if orbits.insert(object, center).is_some() {
             bail!("Found duplicate entry")
         }

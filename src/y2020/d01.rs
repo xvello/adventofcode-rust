@@ -1,15 +1,10 @@
 use crate::utils::Input;
 use anyhow::{bail, Result};
-use std::str::FromStr;
 
 const TARGET_SUM: usize = 2020;
 
-pub fn run(mut input: Input) -> Result<(usize, usize)> {
-    let mut numbers: Vec<usize> = Vec::new();
-    while let Some(Ok(line)) = input.next() {
-        numbers.push(usize::from_str(&line)?);
-    }
-
+pub fn run(input: &Input) -> Result<(usize, usize)> {
+    let numbers: Vec<usize> = input.lines_into()?;
     Ok((compute_first(&numbers)?, compute_second(&numbers)?))
 }
 

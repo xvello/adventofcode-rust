@@ -1,13 +1,10 @@
 use crate::utils::Input;
 use anyhow::{bail, Result};
-use std::str::FromStr;
 
-pub fn run(mut input: Input) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     // Outlet has a joltage of zero
-    let mut joltages = vec![0];
-    while let Some(Ok(line)) = input.next() {
-        joltages.push(usize::from_str(&line)?)
-    }
+    let mut joltages: Vec<usize> = input.lines_into()?;
+    joltages.push(0);
     joltages.sort_unstable();
     // Add our device as highest adapter + 3
     joltages.push(joltages.last().unwrap() + 3);

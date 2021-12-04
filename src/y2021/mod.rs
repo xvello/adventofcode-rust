@@ -3,7 +3,7 @@ pub mod d02;
 pub mod d03;
 pub mod d04;
 
-crate::generate_tests_new! {
+crate::generate_tests! {
     y2021,
     d01: (1688, 1728),
     d02: (1648020, 1759818555),

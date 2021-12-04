@@ -11,10 +11,10 @@ lazy_static! {
     /// Regexp matching part of a rule, group 2 holds the color of the bag
     static ref RULE_RE: regex::Regex = Regex::new(r"((\d+)\s|^)(\w+ \w+) bag").unwrap();
 }
-pub fn run(mut input: Input) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     let mut rules: Rules = Default::default();
-    while let Some(Ok(line)) = input.next() {
-        let mut matches = RULE_RE.captures_iter(&line);
+    for line in input.lines() {
+        let mut matches = RULE_RE.captures_iter(line);
         let container = match matches.next() {
             None => bail!("Invalid input {}", line),
             Some(m) => rules.get_node(m.try_get(3)?),

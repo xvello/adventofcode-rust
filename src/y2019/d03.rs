@@ -3,17 +3,18 @@ use anyhow::Result;
 use std::collections::HashMap;
 use std::str::{FromStr, Split};
 
-pub fn run(mut input: Input) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     let mut output = (usize::MAX, usize::MAX);
+    let mut lines = input.lines();
 
     // Parse path of first cable, deduplicate points by keeping the older occurrence
-    let segments_one = Segments(input.next().unwrap().unwrap());
+    let segments_one = Segments(lines.next().unwrap().to_owned());
     let mut points_one = HashMap::new();
     for (point, steps_one) in segments_one.points() {
         points_one.entry(point).or_insert(steps_one);
     }
 
-    let segments_two = Segments(input.next().unwrap().unwrap());
+    let segments_two = Segments(lines.next().unwrap().to_owned());
     for (point, steps_two) in segments_two.points() {
         if let Some(steps_one) = points_one.get(&point) {
             output.0 = output.0.min(point.manhattan());

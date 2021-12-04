@@ -1,14 +1,14 @@
 use crate::utils::Input;
 use anyhow::{bail, Result};
 
-pub fn run(mut input: Input) -> Result<(u16, u16)> {
+pub fn run(input: &Input) -> Result<(u16, u16)> {
     let mut min = u16::max_value();
     let mut max = u16::min_value();
     let mut checksum = 0;
 
     // Iterate on all known tickets and XOR them in the checksum
-    while let Some(Ok(line)) = input.next() {
-        let id = parse_seat_id(&line)?;
+    for line in input.lines() {
+        let id = parse_seat_id(line)?;
         min = min.min(id);
         max = max.max(id);
         checksum ^= id;

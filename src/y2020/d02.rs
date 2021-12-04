@@ -8,11 +8,11 @@ lazy_static! {
     static ref INPUT_RE: regex::Regex = Regex::new(r"^(\d+)-(\d+) (\w): (\w+)$").unwrap();
 }
 
-pub fn run(mut input: Input) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     let mut output = (0, 0);
 
-    while let Some(Ok(line)) = input.next() {
-        let entry = Entry::from_str(&line)?;
+    for line in input.lines() {
+        let entry = Entry::from_str(line)?;
         if entry.validate_first() {
             output.0 += 1;
         }

@@ -1,7 +1,7 @@
-use crate::utils::NewInput;
+use crate::utils::Input;
 use anyhow::{bail, Result};
 
-pub fn run(input: &NewInput) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     let (mut position1, mut depth1) = (0_usize, 0_usize);
     let (mut position2, mut depth2, mut aim2) = (0_usize, 0_usize, 0_usize);
 

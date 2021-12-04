@@ -2,12 +2,12 @@ use crate::utils::Input;
 use anyhow::{bail, Result};
 use std::str::FromStr;
 
-pub fn run(mut input: Input) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     let mut past_values = vec![];
     let mut invalid_value = 0;
 
-    while let Some(Ok(line)) = input.next() {
-        let value = usize::from_str(&line)?;
+    for line in input.lines() {
+        let value = usize::from_str(line)?;
         if !is_valid(&past_values, value) {
             log::debug!(
                 "Found invalid value {} position {}",

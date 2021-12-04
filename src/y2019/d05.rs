@@ -2,7 +2,7 @@ use crate::utils::Input;
 use crate::y2019::computer::Computer;
 use anyhow::Result;
 
-pub fn run(input: Input) -> Result<(isize, isize)> {
+pub fn run(input: &Input) -> Result<(isize, isize)> {
     let mut output = (0, 0);
     let mut computer = Computer::new(input)?;
     computer.push_input(1);

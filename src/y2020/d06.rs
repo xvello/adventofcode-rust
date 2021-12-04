@@ -2,7 +2,7 @@ use crate::utils::Input;
 use anyhow::Result;
 use std::collections::HashSet;
 
-pub fn run(mut input: Input) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     let mut output = (0, 0);
 
     // First part: anyone says yes
@@ -10,7 +10,7 @@ pub fn run(mut input: Input) -> Result<(usize, usize)> {
     // Second part: everyone says yes
     let mut individual_yes: Vec<HashSet<char>> = Vec::new();
 
-    while let Some(Ok(line)) = input.next() {
+    for line in input.lines() {
         if line.is_empty() {
             // New group, increase counters and clear
             output.0 += anyone_yes.len();

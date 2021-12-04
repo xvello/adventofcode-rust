@@ -23,15 +23,10 @@ pub struct Computer {
 
 impl Computer {
     /// Reads the program and instantiates the work memory to a copy of the program
-    pub fn new(mut input: Input) -> Result<Self> {
+    pub fn new(input: &Input) -> Result<Self> {
         let mut program: Vec<isize> = Vec::new();
-        match input.next() {
-            Some(Ok(line)) => {
-                for value in line.split(',') {
-                    program.push(isize::from_str(value)?);
-                }
-            }
-            _ => bail!("Empty input file"),
+        for value in input.all().trim().split(',') {
+            program.push(isize::from_str(value)?);
         }
         Ok(Self {
             memory: program.clone(),
@@ -211,14 +206,13 @@ impl Computer {
 #[test]
 fn test_d05_example() -> Result<()> {
     let _ = pretty_env_logger::try_init();
-    let program = vec![
+    let program = concat!(
         "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,",
         "1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,",
-        "999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99",
-    ];
-    let input = vec![Ok(program.join(""))].into_iter();
-    let mut computer = Computer::new(Box::new(input))?;
+        "999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99"
+    );
 
+    let mut computer = Computer::new(&Input::from(program))?;
     let test_cases = vec![(7, 999), (8, 1000), (9, 1001)];
     for (input, output) in test_cases {
         computer.reset();

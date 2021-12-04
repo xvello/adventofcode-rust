@@ -2,10 +2,11 @@ use crate::utils::Input;
 use anyhow::Result;
 use std::str::FromStr;
 
-pub fn run(mut input: Input) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     let mut output = (0, 0);
-    let departure = usize::from_str(&input.next().unwrap().unwrap()).unwrap();
-    let busses = input.next().unwrap().unwrap();
+    let mut lines = input.lines();
+    let departure: usize = lines.next().map(str::parse).unwrap().unwrap();
+    let busses = lines.next().unwrap();
 
     let mut earlier_id = 0;
     let mut earlier_time = usize::MAX;

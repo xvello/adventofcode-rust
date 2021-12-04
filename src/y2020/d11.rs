@@ -12,7 +12,7 @@ lazy_static! {
     ];
 }
 
-pub fn run(input: Input) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     let input_map = SeatMap::new(input)?;
     log::debug!("Initial stats: {:?}", input_map.stats());
 
@@ -82,9 +82,9 @@ impl Debug for SeatMap {
 
 impl SeatMap {
     /// Parses the input and builds a new map
-    pub fn new(mut input: Input) -> Result<Self> {
+    pub fn new(input: &Input) -> Result<Self> {
         let mut map = vec![];
-        while let Some(Ok(line)) = input.next() {
+        for line in input.lines() {
             let seats: Vec<SeatState> = line.chars().map(SeatState::from).collect();
             map.push(seats);
         }

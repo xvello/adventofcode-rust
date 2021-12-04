@@ -15,6 +15,8 @@ pub enum CError {
     LoopDetected(usize),
     #[error("Jumping out of bounds, from {0} to {1}, not in [0..{2}]")]
     JumpOutOfBounds(usize, isize, usize),
+    #[error(transparent)]
+    Other(#[from] anyhow::Error),
 }
 
 #[derive(Debug, Clone)]
@@ -26,11 +28,8 @@ pub struct Computer {
 }
 
 impl Computer {
-    pub fn new(mut input: Input) -> Result<Self, CError> {
-        let mut instructions = vec![];
-        while let Some(Ok(line)) = input.next() {
-            instructions.push(Instruction::from_str(&line)?);
-        }
+    pub fn new(input: &Input) -> Result<Self, CError> {
+        let instructions: Vec<Instruction> = input.lines_into()?;
         let mut executed = Vec::new();
         executed.resize(instructions.len(), false);
         Ok(Self {

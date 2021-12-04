@@ -10,11 +10,11 @@ lazy_static! {
     static ref SEAT_RE: regex::Regex = Regex::new(r"^([BF]{7})([RL]{3})$").unwrap();
 }
 
-pub fn run(mut input: Input) -> Result<(u16, u16)> {
+pub fn run(input: &Input) -> Result<(u16, u16)> {
     let mut output = (0, 0);
     let mut known_ids = BTreeSet::new();
-    while let Some(Ok(line)) = input.next() {
-        let id = Seat::from_str(&line)?.get_id();
+    for line in input.lines() {
+        let id = Seat::from_str(line)?.get_id();
         // First result is the highest seat ID
         output.0 = output.0.max(id);
         // Store ID to deduce ours by elimination

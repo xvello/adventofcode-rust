@@ -17,15 +17,15 @@ lazy_static! {
     static ref ECL_RE: regex::Regex = Regex::new("amb|blu|brn|gry|grn|hzl|oth").unwrap();
 }
 
-pub fn run(mut input: Input) -> Result<(u32, u32)> {
+pub fn run(input: &Input) -> Result<(u32, u32)> {
     let mut validators: Holder = Default::default();
 
-    while let Some(Ok(line)) = input.next() {
+    for line in input.lines() {
         if line.is_empty() {
             // Records are separated by an empty line
             validators.check();
         } else {
-            validators.read(&line)?;
+            validators.read(line)?;
         }
     }
     // Don't forget to check last record

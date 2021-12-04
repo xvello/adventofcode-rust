@@ -4,14 +4,12 @@ use anyhow::{bail, Result};
 const TREE: char = '#';
 const OPEN: char = '.';
 
-pub fn run(mut input: Input) -> Result<(usize, usize)> {
+pub fn run(input: &Input) -> Result<(usize, usize)> {
     let mut output = (0, 1);
+    let mut lines = input.lines();
 
     // Read the first line to get the pattern width
-    let first_line = match input.next() {
-        Some(Ok(line)) => line,
-        _ => bail!("Empty input"),
-    };
+    let first_line = lines.next().expect("Empty input");
     if !first_line.starts_with(OPEN) {
         bail!("Starting position is not open")
     }
@@ -27,7 +25,7 @@ pub fn run(mut input: Input) -> Result<(usize, usize)> {
         TreeCounter::new(pattern_width, 1, true),
     ];
 
-    while let Some(Ok(line)) = input.next() {
+    for line in lines {
         // We could assume ASCII and handle [u8], but let's go the harder way
         let terrain: Vec<char> = line.chars().collect();
         if terrain.len() != pattern_width {
