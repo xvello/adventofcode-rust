@@ -25,8 +25,8 @@ macro_rules! generate_bench {
         criterion_group!{
             name = $year;
             config = Criterion::default()
-                .warm_up_time(std::time::Duration::from_secs(1))
-                .measurement_time(std::time::Duration::from_secs(2));
+                .warm_up_time(std::time::Duration::from_secs(2))
+                .measurement_time(std::time::Duration::from_secs(3));
             targets = $($day,)*
         }
         criterion_main!($year);
@@ -35,5 +35,5 @@ macro_rules! generate_bench {
 
 generate_bench! {
     y2021,
-    d04: (41503, 3178),
+    d05: (8622, 22037),
 }
