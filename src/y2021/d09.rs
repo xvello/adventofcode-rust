@@ -1,15 +1,10 @@
-use crate::utils::Input;
+use crate::utils::{parse_digit_line, Input};
 use anyhow::Result;
 use std::collections::VecDeque;
 
 pub fn run(input: &Input) -> Result<(usize, usize)> {
     let mut output = (0, 0);
-
-    // Assumes ascii input
-    let mut map: Vec<Vec<u8>> = input
-        .lines()
-        .map(|line| line.as_bytes().iter().map(|n| n - 48).collect())
-        .collect();
+    let mut map: Vec<Vec<u8>> = input.lines_with(parse_digit_line)?;
 
     output.0 = find_low_points(&map);
     output.1 = find_basins(&mut map);

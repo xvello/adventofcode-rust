@@ -35,5 +35,5 @@ macro_rules! generate_bench {
 
 generate_bench! {
 y2021,
-    d08: (452, 1096964),
+    d09: (458, 1391940),
 }

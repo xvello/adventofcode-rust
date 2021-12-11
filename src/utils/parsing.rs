@@ -41,3 +41,12 @@ impl CaptureParser for regex::Captures<'_> {
         }
     }
 }
+
+/// Parses a line of ASCII digits into a vector of u8 integers, fails on non-ascii input.
+/// Non-digit ASCII input is not checked for, and will produce garbage.
+pub fn parse_digit_line(line: &str) -> Result<Vec<u8>> {
+    if !line.is_ascii() {
+        bail!("non-ascii input")
+    }
+    Ok(line.as_bytes().iter().map(|n| n - 48).collect())
+}

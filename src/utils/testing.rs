@@ -35,6 +35,10 @@ impl Input {
         self.0.lines()
     }
 
+    pub fn lines_with<T>(&self, f: fn(&str) -> Result<T>) -> Result<Vec<T>> {
+        Ok(self.lines().map(|l| f(l).unwrap()).collect())
+    }
+
     pub fn lines_into<T: FromStr>(&self) -> Result<Vec<T>>
     where
         <T as std::str::FromStr>::Err: std::error::Error,
