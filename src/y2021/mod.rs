@@ -9,6 +9,7 @@ pub mod d07_opt;
 pub mod d08;
 pub mod d09;
 pub mod d10;
+pub mod d11;
 
 crate::generate_tests! {
     y2021,
@@ -23,4 +24,5 @@ crate::generate_tests! {
     d08: (452, 1096964),
     d09: (458, 1391940),
     d10: (268845, 4038824534),
+    d11: (1647, 348),
 }

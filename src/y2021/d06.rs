@@ -27,6 +27,8 @@ pub fn run(input: &Input) -> Result<(usize, usize)> {
 
 fn simulate(generations: &mut VecDeque<usize>) {
     let spawns = generations.pop_front().unwrap_or(0);
-    generations.get_mut(6).map(|n| n.add_assign(spawns));
+    if let Some(n) = generations.get_mut(6) {
+        n.add_assign(spawns)
+    }
     generations.push_back(spawns);
 }

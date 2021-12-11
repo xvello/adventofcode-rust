@@ -12,7 +12,7 @@ pub fn run(input: &Input) -> Result<(usize, usize)> {
     Ok(output)
 }
 
-fn find_low_points(map: &Vec<Vec<u8>>) -> usize {
+fn find_low_points(map: &[Vec<u8>]) -> usize {
     let lines = map.len();
     let rows = map[0].len();
     let mut score = 0;
@@ -76,5 +76,5 @@ fn find_basins(map: &mut Vec<Vec<u8>>) -> usize {
         }
     }
     sizes.sort_unstable();
-    sizes.iter().rev().take(3).fold(1, |acc, s| acc * s)
+    sizes.iter().rev().take(3).product()
 }

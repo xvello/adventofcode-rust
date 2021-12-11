@@ -66,23 +66,23 @@ impl Decoder {
             4 => 4,
             5 => {
                 let digit = parse_digit(input);
-                return if self.one & digit == self.one {
+                if self.one & digit == self.one {
                     3
                 } else if self.four_ish & digit == self.four_ish {
                     5
                 } else {
                     2
-                };
+                }
             }
             6 => {
                 let digit = parse_digit(input);
-                return if self.four & digit == self.four {
+                if self.four & digit == self.four {
                     9
                 } else if self.one & digit == self.one {
                     0
                 } else {
                     6
-                };
+                }
             }
             7 => 8,
             _ => 0,
