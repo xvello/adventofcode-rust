@@ -36,7 +36,11 @@ impl Input {
     }
 
     pub fn lines_with<T>(&self, f: fn(&str) -> Result<T>) -> Result<Vec<T>> {
-        Ok(self.lines().map(|l| f(l).unwrap()).collect())
+        Ok(self
+            .lines()
+            .filter(|s| !s.is_empty())
+            .map(|l| f(l).unwrap())
+            .collect())
     }
 
     pub fn lines_into<T: FromStr>(&self) -> Result<Vec<T>>
