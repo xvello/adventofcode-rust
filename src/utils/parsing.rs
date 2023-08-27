@@ -10,7 +10,7 @@ pub trait CaptureParser {
     /// Parse any regexp capture into a type implementing FromStr
     fn parse<T: FromStr>(&self, index: usize) -> Result<T>
     where
-        <T as std::str::FromStr>::Err: std::error::Error;
+        <T as FromStr>::Err: std::error::Error;
 
     /// Extract the value and checks it against a regexp
     fn matches(&self, index: usize, regexp: &Regex) -> bool;
@@ -26,7 +26,7 @@ impl CaptureParser for regex::Captures<'_> {
 
     fn parse<T: FromStr>(&self, index: usize) -> Result<T>
     where
-        <T as std::str::FromStr>::Err: std::error::Error,
+        <T as FromStr>::Err: std::error::Error,
     {
         match T::from_str(self.try_get(index)?) {
             Ok(value) => Ok(value),

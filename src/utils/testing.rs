@@ -1,6 +1,7 @@
-use anyhow::Result;
+use anyhow::{bail, Result};
 use log::debug;
 use std::borrow::Borrow;
+use std::fmt::Display;
 use std::fs::File;
 use std::io::Read;
 use std::str::{FromStr, Lines};
@@ -43,11 +44,26 @@ impl Input {
             .collect())
     }
 
+    pub fn lines_summed<T: std::iter::Sum>(&self, f: fn(&str) -> Result<T>) -> Result<T> {
+        Ok(self
+            .lines()
+            .filter(|s| !s.is_empty())
+            .map(|l| f(l).unwrap())
+            .sum())
+    }
+
     pub fn lines_into<T: FromStr>(&self) -> Result<Vec<T>>
     where
-        <T as FromStr>::Err: std::error::Error,
+        <T as FromStr>::Err: Display,
     {
-        Ok(self.lines().map(|l| T::from_str(l).unwrap()).collect())
+        let mut parsed: Vec<T> = Vec::new();
+        for (line, value) in self.lines().enumerate() {
+            match T::from_str(value) {
+                Ok(result) => parsed.push(result),
+                Err(err) => bail!("error parsing line {}: {}", line, err),
+            }
+        }
+        Ok(parsed)
     }
 }
 
