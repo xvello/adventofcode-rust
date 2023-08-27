@@ -1,6 +1,5 @@
 use crate::utils::Input;
 use anyhow::{bail, Result};
-use retain_mut::RetainMut;
 use std::ops::Add;
 use std::str::{FromStr, Lines};
 
@@ -22,7 +21,7 @@ pub fn run(input: &Input) -> Result<(u16, u16)> {
     }
 
     for number in numbers {
-        RetainMut::retain_mut(&mut cards, |card| {
+        cards.retain_mut(|card| {
             if let Some(score) = card.process(number) {
                 if output.0 == 0 {
                     output.0 = score;

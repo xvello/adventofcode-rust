@@ -45,7 +45,7 @@ impl Input {
 
     pub fn lines_into<T: FromStr>(&self) -> Result<Vec<T>>
     where
-        <T as std::str::FromStr>::Err: std::error::Error,
+        <T as FromStr>::Err: std::error::Error,
     {
         Ok(self.lines().map(|l| T::from_str(l).unwrap()).collect())
     }
@@ -58,8 +58,8 @@ macro_rules! generate_tests {
         #[test]
         fn $day() -> anyhow::Result<()> {
             let _ = pretty_env_logger::try_init();
-            let input = crate::utils::Input::open(stringify!($year), stringify!($day)).unwrap();
-            let output =  crate::$year::$day::run(&input)?;
+            let input = $crate::utils::Input::open(stringify!($year), stringify!($day)).unwrap();
+            let output =  $crate::$year::$day::run(&input)?;
             assert_eq!($expected, output);
             Ok(())
         }

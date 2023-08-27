@@ -41,7 +41,7 @@ enum Segment {
 impl Segment {
     fn parse(line: &str) -> Self {
         let mut numbers = line
-            .split(|c: char| !c.is_digit(10))
+            .split(|c: char| !c.is_ascii_digit())
             .filter(|s| !s.is_empty())
             .map(|s| usize::from_str(s).unwrap());
 

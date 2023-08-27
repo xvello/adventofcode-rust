@@ -13,7 +13,7 @@ pub fn run(input: &Input) -> Result<(u32, usize)> {
         let line: Vec<u32> = line.chars().map(|c| c as u32 - 48).collect();
         if let Some(prev) = prev {
             assert_eq!(prev.len(), line.len());
-            graph.extend_with_edges((0..line.len()).into_iter().flat_map(|i| {
+            graph.extend_with_edges((0..line.len()).flat_map(|i| {
                 vec![
                     (n * line.len() + i, (n - 1) * line.len() + i, prev[i]), // Going up
                     ((n - 1) * line.len() + i, n * line.len() + i, line[i]), // Going down
